@@ -37,6 +37,7 @@ function cellToGrid(x,y,grid)
 	return xoff+x*grid,yoff+y*grid
 end
 
+
 function doWindow(x,y,w,h,ui)
 
 	local grid = ui.grid
