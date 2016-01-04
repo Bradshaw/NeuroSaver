@@ -7,6 +7,7 @@ end
 
 
 function state:enter( pre )
+	ui = UI.new()
 end
 
 
@@ -15,11 +16,14 @@ end
 
 
 function state:update(dt)
+	ui:update(dt)
 end
 
 
 function state:draw()
+	ui:draw()
 end
+
 
 
 function state:errhand(msg)
