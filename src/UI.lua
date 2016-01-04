@@ -3,7 +3,9 @@ UI = {}
 
 function UI.new()
 	local self = setmetatable({},{__index=UI_mt})
-	self.grid = 64
+	self.lineStyle = "smooth"
+	self.lineWidth = 3
+	self.grid = 128
 	self.wid = 0
 
 
@@ -18,11 +20,10 @@ end
 function UI_mt:draw()
 	self.wid = 0
 	doWindow(0,0,2,3,self)
-	doWindow(5,3,1,1,self)
-	doWindow(6,3,1,1,self)
-	doWindow(7,3,1,1,self)
-	doWindow(8,3,1,1,self)
-	doGrid(self.grid)
+	doWindow(0,3,1,1,self)
+	doWindow(1,3,1,2,self)
+	doWindow(0,4,1,1,self)
+	doGrid(self)
 end
 
 function pixelToGrid(x,y,grid)
@@ -49,6 +50,8 @@ function doWindow(x,y,w,h,ui)
 
 	x = x+0.5
 	y = y+0.5
+	love.graphics.setLineStyle(ui.lineStyle)
+	love.graphics.setLineWidth(ui.lineWidth)
 
 	love.graphics.setBlendMode("alpha")
 	love.graphics.setColor(3,13,23,32)
@@ -87,12 +90,13 @@ function doWindow(x,y,w,h,ui)
 end
 
 
-function doPatches()
+function doPatches(ui)
 	local r,g,b,a = love.graphics.getColor()
-	local grid = 128
+	local grid = ui.grid
 	local xoff = (love.graphics.getWidth()%grid)/2+grid/2
 	local yoff = (love.graphics.getHeight()%grid)/2+grid/2
-	love.graphics.setLineStyle("rough")
+	love.graphics.setLineStyle(ui.lineStyle)
+	love.graphics.setLineWidth(ui.lineWidth)
 	for i=xoff,love.graphics.getWidth()-grid,grid do
 		for j=yoff,love.graphics.getHeight()-grid,grid do
 			local x = math.floor(i)+0.5
@@ -109,7 +113,10 @@ function doPatches()
 	love.graphics.setColor(r,g,b,a)
 end
 
-function doGrid(grid)
+function doGrid(ui)
+	love.graphics.setLineStyle(ui.lineStyle)
+	love.graphics.setLineWidth(ui.lineWidth)
+	local grid = ui.grid
 	local r,g,b,a = love.graphics.getColor()
 	love.graphics.setColor(255,255,255,3)
 	local mode = love.graphics.getBlendMode()

@@ -2,7 +2,7 @@
 
 function love.load(arg)
 	
-	font = love.graphics.newFont("fonts/04B_03__.TTF",8)
+	font = love.graphics.newFont("fonts/04B_03__.TTF",32)
 	love.graphics.setFont(font)
 	diplodocus = require "diplodocus"
 	useful = diplodocus.useful
