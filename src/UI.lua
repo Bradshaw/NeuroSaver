@@ -4,7 +4,7 @@ UI = {}
 function UI.new()
 	local self = setmetatable({},{__index=UI_mt})
 	self.lineStyle = "smooth"
-	self.lineWidth = 3
+	self.lineWidth = 1
 	self.grid = 128
 	self.wid = 0
 
@@ -61,23 +61,23 @@ function doWindow(x,y,w,h,ui)
 	love.graphics.setColor(128,196,255,128)
 
 
-	love.graphics.line(x,y,x+5,y)
-	love.graphics.line(x,y,x,y+5)
+	love.graphics.line(x,y+5,x,y,x+5,y)
+	--love.graphics.line(x,y,x,y+5)
 
-	love.graphics.line(x+w,y,x+w-4,y)
-	love.graphics.line(x+w,y,x+w,y+5)
+	love.graphics.line(x+w,y+5,x+w,y,x+w-4,y)
+	--love.graphics.line(x+w,y,x+w,y+5)
 
-	love.graphics.line(x,y+h,x+5,y+h)
-	love.graphics.line(x,y+h,x,y+h-4)
+	love.graphics.line(x,y+h-4,x,y+h,x+5,y+h)
+	--love.graphics.line(x,y+h,x,y+h-4)
 
-	love.graphics.line(x+w,y+h,x+w-4,y+h)
-	love.graphics.line(x+w,y+h,x+w,y+h-4)
+	love.graphics.line(x+w,y+h-4,x+w,y+h,x+w-4,y+h)
+	--love.graphics.line(x+w,y+h,x+w,y+h-4)
 
-	love.graphics.line(x,y+t,x+5,y+t)
-	love.graphics.line(x,y+t,x,y+t-4)
+	love.graphics.line(x,y+t-4,x,y+t,x+5,y+t)
+	--love.graphics.line(x,y+t,x,y+t-4)
 
-	love.graphics.line(x+w,y+t,x+w-4,y+t)
-	love.graphics.line(x+w,y+t,x+w,y+t-4)
+	love.graphics.line(x+w,y+t-4,x+w,y+t,x+w-4,y+t)
+	--love.graphics.line(x+w,y+t,x+w,y+t-4)
 	local msg = "tty"..ui.wid
 	ui.wid = ui.wid+1
 	local fyo = f:getHeight(msg)
@@ -118,7 +118,7 @@ function doGrid(ui)
 	love.graphics.setLineWidth(ui.lineWidth)
 	local grid = ui.grid
 	local r,g,b,a = love.graphics.getColor()
-	love.graphics.setColor(255,255,255,3)
+	love.graphics.setColor(255,255,255,30)
 	local mode = love.graphics.getBlendMode()
 	love.graphics.setBlendMode("add")
 	local xoff = (love.graphics.getWidth()%grid)/2+grid/2

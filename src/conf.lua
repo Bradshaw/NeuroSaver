@@ -1,5 +1,5 @@
 function love.conf(t)
-    __DEBUG__ = false
+    --__DEBUG__ = true
 
     t.identity = "newproject"                   -- The name of the save directory (string)
     t.version = "0.10.0"                -- The LÖVE version this game was made for (string)
@@ -10,7 +10,7 @@ function love.conf(t)
  
     t.window.title = "NEWPROJECT"        -- The window title (string)
     t.window.icon = nil                 -- Filepath to an image to use as the window's icon (string)
-    t.window.width = 800                -- The window width (number)
+    t.window.width = 600                -- The window width (number)
     t.window.height = 600               -- The window height (number)
     t.window.borderless = false         -- Remove all border visuals from the window (boolean)
     t.window.resizable = true          -- Let the window be user-resizable (boolean)

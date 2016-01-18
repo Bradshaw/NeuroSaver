@@ -95,7 +95,7 @@ end
 --[[
 	Iterates a function into itself
 
-	To achieve f(f(f(a))) do useful.iterate(f, 3, a)
+	To achieve f(f(f(a, b, c))) do useful.iterate(f, 3, a, b, c)
 
 	Ideally the iterated function should return as many value as it has parameters, and in a semantically identical order.
 ]]
@@ -104,6 +104,15 @@ function useful.iterate(fn, it, ...)
 		return fn(useful.iterate(fn, it-1, ...))
 	else
 		return fn(...)
+	end
+end
+
+
+function useful.sum(a, ...)
+	if (a) then
+		return a + useful.sum(...)
+	else
+		return 0
 	end
 end
 

@@ -4,6 +4,42 @@
 		"selected_items":
 		[
 			[
+				"c",
+				"creature"
+			],
+			[
+				"cre",
+				"creature_mt"
+			],
+			[
+				"u",
+				"update"
+			],
+			[
+				"m",
+				"myGameObjects"
+			],
+			[
+				"for",
+				"fori	for i,v in ipairs()"
+			],
+			[
+				"lin",
+				"lineWidth"
+			],
+			[
+				"gr",
+				"grid"
+			],
+			[
+				"li",
+				"lineWidth"
+			],
+			[
+				"Line",
+				"lineStyle"
+			],
+			[
 				"get",
 				"getWidth"
 			],
@@ -14,10 +50,6 @@
 			[
 				"re",
 				"rectangle"
-			],
-			[
-				"gr",
-				"graphics"
 			],
 			[
 				"fu",
@@ -36,18 +68,22 @@
 	"buffers":
 	[
 	],
-	"build_system": "",
+	"build_system": "Packages/SublimeLove/Love.sublime-build",
 	"command_palette":
 	{
-		"height": 0.0,
+		"height": 87.0,
 		"selected_items":
 		[
+			[
+				"install",
+				"Package Control: Install Package"
+			]
 		],
-		"width": 0.0
+		"width": 449.0
 	},
 	"console":
 	{
-		"height": 0.0
+		"height": 139.0
 	},
 	"distraction_free":
 	{
@@ -60,7 +96,16 @@
 	},
 	"file_history":
 	[
-		"/Users/Gaeel/dev/jams/neurosaver/src/gamestate.lua"
+		"/Users/Gaeel/dev/jams/neurosaver/src/conf.lua",
+		"/Users/Gaeel/dev/jams/neurosaver/src/UI.lua",
+		"/Users/Gaeel/dev/jams/neurosaver/src/creature.lua",
+		"/Users/Gaeel/dev/jams/neurosaver/src/main.lua",
+		"/Users/Gaeel/dev/jams/neurosaver/src/game.lua",
+		"/Users/Gaeel/Library/Application Support/Sublime Text 2/Packages/SublimeLove/Love.sublime-build",
+		"/Users/Gaeel/Library/Application Support/Sublime Text 2/Packages/SublimeLove/LoveComplete.py",
+		"/Users/Gaeel/Library/Application Support/Sublime Text 2/Packages/User/love.sublime-build",
+		"/Users/Gaeel/dev/jams/neurosaver/src/gamestate.lua",
+		"/Users/Gaeel/dev/jams/neurosaver/src/diplodocus/useful.lua"
 	],
 	"find":
 	{
@@ -133,6 +178,10 @@
 		]
 	},
 	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 112.0
+	},
 	"replace":
 	{
 		"height": 64.0
