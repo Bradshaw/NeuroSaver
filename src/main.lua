@@ -11,6 +11,7 @@ function love.load(arg)
 	useful = diplodocus.useful
 	require("neuro")
 	require("UI")
+	require("spaceship")
 	gstate = require "gamestate"
 	game = require "game"
 	gstate.registerEvents()

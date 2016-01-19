@@ -7,32 +7,31 @@ end
 
 
 function state:enter( pre )
-	--ui = UI.new()
-	net = neuro.new(2,3,6,4)
-	canv = love.graphics.newCanvas(love.graphics.getWidth(),love.graphics.getHeight())
-	skipIn = 1
-	net:update()
-	xness = 0
-	yness = 0
-	local w = 30
-	local h = 30
-	love.graphics.setCanvas(canv)
-	for i=0,love.graphics.getWidth(),w do
-		for j=0,love.graphics.getHeight(),h do
-			net.ins[1] = ((i+w/2)/love.graphics.getWidth())*2-1
-			net.ins[2] = ((j+h/2)/love.graphics.getHeight())*2-1
-			net:update()
-			---[[
-			local r = net.outs[1]>=0 and net.outs[1]*255 or 0
-			local g = net.outs[2]>=0 and net.outs[2]*255 or 0
-			local b = net.outs[3]>=0 and net.outs[3]*255 or 0
-			--]]
-			--local r,g,b = neuro.color(net.outs[1])
-			love.graphics.setColor(r,g,b)
-			love.graphics.rectangle("fill", i, j, w, h)
-		end
+	ui = UI.new()
+	love.physics.setMeter(64)
+	world = love.physics.newWorld(0, 0, false)
+	spaceship.new(love.graphics.getWidth()/2,love.graphics.getHeight()/2)
+	for i=1,10 do
+		spaceship.new(
+			(math.random())*love.graphics.getWidth(),
+			(math.random())*love.graphics.getHeight()
+			)
 	end
-	love.graphics.setCanvas()
+	focus = 1
+	food = {}
+	for i=1,1000 do
+		table.insert(food,{
+			x = (math.random()*3-1)*love.graphics.getWidth(),
+			y = (math.random()*3-1)*love.graphics.getHeight()
+			})
+	end
+	starfield = {}
+	for i=1,0 do
+		table.insert(starfield,{
+			x = (math.random()*3-1)*love.graphics.getWidth(),
+			y = (math.random()*3-1)*love.graphics.getHeight()
+			})
+	end
 end
 
 
@@ -41,49 +40,29 @@ end
 
 
 function state:update(dt)
-	local w = 1
-	local h = 1
-	local t = love.timer.getTime();
-	love.graphics.setCanvas(canv)
-	for i=xness,love.graphics.getWidth(),w do
-		if (love.timer.getTime()-t>skipIn) then
-			break
-		end
-		xness = i
-		for j=yness,love.graphics.getHeight(),h do
-			if (love.timer.getTime()-t>skipIn) then
-				break
-			end
-			yness = j
-			net.ins[1] = ((i+w/2)/love.graphics.getWidth())*2-1
-			net.ins[2] = ((j+h/2)/love.graphics.getHeight())*2-1
-			net:update()
-			---[[
-			local r = net.outs[1]>=0 and net.outs[1]*255 or 0
-			local g = net.outs[2]>=0 and net.outs[2]*255 or 0
-			local b = net.outs[3]>=0 and net.outs[3]*255 or 0
-			--]]
-			--local r,g,b = neuro.color(net.outs[1])
-			love.graphics.setColor(r,g,b)
-			love.graphics.rectangle("fill", i, j, w, h)
-		end
-		yness = 0
-	end
-	love.graphics.setCanvas()
+	--print(dt)
+	ui:update(dt)
+	world:update(dt)
+	spaceship.update(dt)
 end
 
 
 function state:draw()
+	spaceship.all[focus].net:draw()
+	local fx, fy = spaceship.all[focus].phys.body:getPosition()
+	love.graphics.translate(-fx+love.graphics.getWidth()/2,-fy+love.graphics.getHeight()/2)
 	love.graphics.setColor(255,255,255)
-	love.graphics.draw(canv)
-	if xness<love.graphics.getWidth() then
-		love.graphics.print(xness.." / "..love.graphics.getWidth(),100,100)
-		love.graphics.print(math.floor((xness/love.graphics.getWidth())*100).."%",100,130)
+	for i,v in ipairs(starfield) do
+		love.graphics.points(v.x, v.y)
 	end
+	love.graphics.setColor(64,196,64,127)
+	for i,v in ipairs(food) do
+		love.graphics.circle("fill", v.x, v.y, 5+math.sin(love.timer.getTime()+i))
+	end
+	love.graphics.setColor(64,64,64)
+	love.graphics.circle("fill", fx, fy, 30)
 	--ui:draw()
-	---[[
-	--]]
-	--net:draw()
+	spaceship.draw()
 end
 
 

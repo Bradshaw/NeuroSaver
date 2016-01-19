@@ -80,6 +80,19 @@ function neuro_mt:draw()
 		local r,g,b = neuro.color(self.outs[i])
 		love.graphics.setColor(r,g,b,255)
 		love.graphics.rectangle("fill", self.nLayers*50 + 60, i*30, 20, 20)
+		if self.outs[i]>0.5 then
+			love.graphics.setColor(0,255,255)
+			love.graphics.line(
+				self.nLayers*50 + 60,
+				i*30,
+				self.nLayers*50 + 60+20,
+				i*30+20)
+			love.graphics.line(
+				self.nLayers*50 + 60,
+				i*30+20,
+				self.nLayers*50 + 60+20,
+				i*30)
+		end
 	end
 end
 
@@ -104,17 +117,15 @@ function neuro_mt:getMult(l,n)
 end
 
 function neuro.scaler(v,a)
-	return math.sinh(a*v*2)
+	return math.sinh(a*v)
 	--return a*v
 	--return a*math.sqrt(math.abs(v))*(v>=0 and 1 or -1)
 end
 
 function neuro.mixer(vs)
 	local sum = 0
-	local sign = 1
 	for i,v in ipairs(vs) do
 		sum = sum+(v)
-		sign = sign*(v>=0 and 1 or -1)
 	end
 	return math.tanh(sum)
 end

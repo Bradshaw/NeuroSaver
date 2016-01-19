@@ -34,6 +34,10 @@ function useful.upairs(t, test)
 	return iterator, t
 end
 
+function useful.lerp( a, b, n )
+	return n*b+(1-n)*a
+end
+
 function useful.dist2( x1, y1, x2, y2 )
 	if type(x1)=="table" then
 		return useful.dist2(x1.x, x1.y, y1.x, y1.y)
