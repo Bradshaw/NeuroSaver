@@ -19,6 +19,7 @@ function spaceship.new(x,y,typo)
 	self.phys.body:setAngularDamping(2)
 
 	if typo then
+		print(typo.name)
 		self.name = typo.name
 		self.thrusters = typo.thrusters
 		self.sensors = typo.sensors
@@ -137,6 +138,7 @@ function spaceship.splice(a,b)
 	end
 	local es = math.floor(e*a.name:len())
 	t.name = a.name:sub(1,es)..b.name:sub(es+1)
+	print(a.name.." + "..b.name.." -> "..t.name)
 	return t
 end
 

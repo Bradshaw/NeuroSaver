@@ -86,7 +86,7 @@ function state:draw()
 		love.graphics.circle("fill", v.x, v.y, 5+math.sin(love.timer.getTime()+i))
 		local pls = ((love.timer.getTime()*(useful.lerp(15,25,i/#food))+i)%20)/20
 		love.graphics.setColor(64,196,196,127*(1-pls))
-		love.graphics.circle("line", v.x, v.y, 5+math.sin(love.timer.getTime()+i)+pls*20)
+		love.graphics.circle("line", v.x, v.y, pls*20)
 	end
 	spaceship.draw()
 	spaceship.all[focus]:drawOverlayUI()

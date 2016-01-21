@@ -60,7 +60,7 @@ function neuro_mt:update()
 end
 
 function neuro.color(v)
-	return (v<0 and math.abs(v)*255 or 0), 0, (v>0 and v*255 or 0)
+	return (v<0 and math.abs(v)*255 or 0), (v>0 and v*255 or 0), (v>0 and v*255 or 0)
 end
 
 function neuro_mt:draw(x,y,size,space)
