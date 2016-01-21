@@ -8,16 +8,18 @@ end
 function neuro.new(ins, outs, nLayers, perLayer, values)
 	local self = setmetatable({},{__index=neuro_mt})
 
-	ins = ins+2
+	ins = ins+1
 
 	self.values = values or {}
+	local dValues = {}
 	self.nLayers = nLayers
 	self.perLayer = perLayer
 
 	local _i = 1
 	local _next = function()
 		_i = _i+1
-		return values and values[_i] or math.random()*2-1
+		table.insert(dValues,values and values[_i] or math.random()*2-1)
+		return dValues[#dValues]
 	end
 
 	self.ins = {}
@@ -46,14 +48,12 @@ function neuro.new(ins, outs, nLayers, perLayer, values)
 		end
 	end
 	self.memo = {}
-	print("Built: ".._i-1)
-	return self
+	return self, dValues
 end
 
 function neuro_mt:update()
 	self.memo = {}
 	self.ins[#self.ins] = 1
-	self.ins[#self.ins-1] = 0
 	for i,v in ipairs(self.outs) do
 		self.outs[i] = self:getVal(#self.layers,i)
 	end
@@ -63,36 +63,31 @@ function neuro.color(v)
 	return (v<0 and math.abs(v)*255 or 0), 0, (v>0 and v*255 or 0)
 end
 
-function neuro_mt:draw()
+function neuro_mt:draw(x,y,size,space)
+	local x = x or 10
+	local y = y or 10
+	local size = size or 20
+	local space = space or 10
 	for i=1,#self.ins do
 		local r,g,b = neuro.color(self.ins[i])
 		love.graphics.setColor(r,g,b,255)
-		love.graphics.rectangle("fill", 10, i*30, 20, 20)
+		love.graphics.rectangle("fill", x, y+i*(size+space), size, size)
 	end
 	for i=1,self.nLayers do
 		for j=1,self.perLayer do
 			local r,g,b = neuro.color(self:getVal(i,j))
 			love.graphics.setColor(r,g,b,255)
-			love.graphics.rectangle("fill", 10 + i*50, j*30, 20, 20)
+			love.graphics.rectangle("fill", x + i*(size+space), y+j*(size+space), size, size)
 		end
 	end
 	for i=1,#self.outs do
 		local r,g,b = neuro.color(self.outs[i])
-		love.graphics.setColor(r,g,b,255)
-		love.graphics.rectangle("fill", self.nLayers*50 + 60, i*30, 20, 20)
 		if self.outs[i]>0.5 then
 			love.graphics.setColor(0,255,255)
-			love.graphics.line(
-				self.nLayers*50 + 60,
-				i*30,
-				self.nLayers*50 + 60+20,
-				i*30+20)
-			love.graphics.line(
-				self.nLayers*50 + 60,
-				i*30+20,
-				self.nLayers*50 + 60+20,
-				i*30)
+		else
+			love.graphics.setColor(r,g,b,255)
 		end
+		love.graphics.rectangle("fill", self.nLayers*(size+space)+x+size+space, y+i*(size+space), size, size)
 	end
 end
 

@@ -10,28 +10,39 @@ function state:enter( pre )
 	ui = UI.new()
 	love.physics.setMeter(64)
 	world = love.physics.newWorld(0, 0, false)
-	spaceship.new(love.graphics.getWidth()/2,love.graphics.getHeight()/2)
+	local _, typo = spaceship.new(
+			useful.nrandom(love.graphics.getWidth()/3,love.graphics.getWidth()/2),
+			useful.nrandom(love.graphics.getHeight()/3,love.graphics.getHeight()/2)
+			)
+	local _, typo2 = spaceship.new(
+			useful.nrandom(love.graphics.getWidth()/3,love.graphics.getWidth()/2),
+			useful.nrandom(love.graphics.getHeight()/3,love.graphics.getHeight()/2)
+			)
 	for i=1,10 do
 		spaceship.new(
-			(math.random())*love.graphics.getWidth(),
-			(math.random())*love.graphics.getHeight()
+			useful.nrandom(love.graphics.getWidth()/3,love.graphics.getWidth()/2),
+			useful.nrandom(love.graphics.getHeight()/3,love.graphics.getHeight()/2),
+			spaceship.mutate(spaceship.splice(typo,typo2))
 			)
 	end
 	focus = 1
 	food = {}
-	for i=1,1000 do
+	for i=1,300 do
 		table.insert(food,{
-			x = (math.random()*3-1)*love.graphics.getWidth(),
-			y = (math.random()*3-1)*love.graphics.getHeight()
+			x = useful.nrandom(love.graphics.getWidth(),love.graphics.getWidth()/2),
+			y = useful.nrandom(love.graphics.getHeight(),love.graphics.getHeight()/2)
 			})
 	end
 	starfield = {}
 	for i=1,0 do
 		table.insert(starfield,{
-			x = (math.random()*3-1)*love.graphics.getWidth(),
-			y = (math.random()*3-1)*love.graphics.getHeight()
+			x = useful.nrandom(love.graphics.getWidth(),love.graphics.getWidth()/2),
+			y = useful.nrandom(love.graphics.getHeight(),love.graphics.getHeight()/2)
 			})
 	end
+	cx, cy = nil, nil
+
+	cam = math.random(5,15)
 end
 
 
@@ -40,7 +51,20 @@ end
 
 
 function state:update(dt)
-	--print(dt)
+	cam = cam - dt
+	if cam<0 then
+		cam = math.random(5,15)
+		--focus = math.random(1,#spaceship.all)
+	end
+	local fx, fy = spaceship.all[focus].phys.body:getPosition()
+	cx, cy = useful.moveTowards2D(
+		{
+				x = (cx or fx),
+				y = (cy or fy) 
+		},{
+				x = fx,
+				y = fy
+		}, 1500*dt)
 	ui:update(dt)
 	world:update(dt)
 	spaceship.update(dt)
@@ -48,21 +72,24 @@ end
 
 
 function state:draw()
-	spaceship.all[focus].net:draw()
+	--ui:draw()
+	spaceship.all[focus]:drawFixedUI()
 	local fx, fy = spaceship.all[focus].phys.body:getPosition()
-	love.graphics.translate(-fx+love.graphics.getWidth()/2,-fy+love.graphics.getHeight()/2)
+	love.graphics.translate(-cx+love.graphics.getWidth()/2,-cy+love.graphics.getHeight()/2)
 	love.graphics.setColor(255,255,255)
 	for i,v in ipairs(starfield) do
-		love.graphics.points(v.x, v.y)
+		local dep = useful.lerp(5,20,i/#starfield)
+		love.graphics.points(v.x+cx/dep, v.y+cy/dep)
 	end
-	love.graphics.setColor(64,196,64,127)
 	for i,v in ipairs(food) do
+		love.graphics.setColor(64,196,196,127)
 		love.graphics.circle("fill", v.x, v.y, 5+math.sin(love.timer.getTime()+i))
+		local pls = ((love.timer.getTime()*(useful.lerp(15,25,i/#food))+i)%20)/20
+		love.graphics.setColor(64,196,196,127*(1-pls))
+		love.graphics.circle("line", v.x, v.y, 5+math.sin(love.timer.getTime()+i)+pls*20)
 	end
-	love.graphics.setColor(64,64,64)
-	love.graphics.circle("fill", fx, fy, 30)
-	--ui:draw()
 	spaceship.draw()
+	spaceship.all[focus]:drawOverlayUI()
 end
 
 
@@ -80,8 +107,7 @@ function state:keypressed(key, isRepeat)
 		love.event.push('quit')
 	end
 	if key=="space" then
-		print("switch")
-		gstate.switch(game)
+		focus = (focus%#spaceship.all)+1
 	end
 end
 

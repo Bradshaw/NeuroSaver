@@ -11,6 +11,14 @@ function useful.getStrID()
 	return string.format("%06d",useful.getNumID())
 end
 
+function useful.randomString(length)
+	local str = ""
+	while str:len()<length do
+		str = str..string.char(math.random(33,126))
+	end
+	return str
+end
+
 local default_upairs_test = function(elem)
 	return (type(elem)=="table") and (elem.purge) or false
 end
@@ -36,6 +44,19 @@ end
 
 function useful.lerp( a, b, n )
 	return n*b+(1-n)*a
+end
+
+function useful.moveTowards2D(a,b,n)
+	local dx = b.x-a.x
+	local dy = b.y-a.y
+	local d = math.sqrt(dx*dx+dy*dy)
+	local dist = math.min(n,d)
+	if d>0 then
+		local nx = dx/d
+		local ny = dy/d
+		return a.x + dist * nx, a.y + dist * ny
+	end
+	return a.x,a.y
 end
 
 function useful.dist2( x1, y1, x2, y2 )
@@ -87,7 +108,7 @@ function useful.nrandom(sigma, mu)
 	local u1 = math.random()
 	local u2 = math.random()
 	local z0 = math.sqrt(-2*math.log(u1)) * math.cos(useful.tau * u2)
-	return z0 * sigma + mu, mu
+	return z0 * sigma + mu
 end
 
 function useful.orandom(probability, multiplier)
