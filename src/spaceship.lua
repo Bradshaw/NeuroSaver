@@ -2,11 +2,20 @@ local spaceship_mt = {}
 spaceship = {}
 
 spaceship.all = {}
+spaceship.layers = 13
+spaceship.perLayer = 8
 
 function spaceship.new(x,y,typo)
 	local self = setmetatable({},{__index=spaceship_mt})
 	local typo = typo
 	local dValues
+
+	self.health = 1
+	self.cold = 0
+	self.burnout = 1/20
+	self.freeze = 1/10
+
+	self.notARetard = false
 
 	self.phys = {}
 	self.phys.body = love.physics.newBody(world,
@@ -17,15 +26,17 @@ function spaceship.new(x,y,typo)
 	self.phys.fixture = love.physics.newFixture(self.phys.body, self.phys.shape)
 	self.phys.body:setLinearDamping(1)
 	self.phys.body:setAngularDamping(2)
-
+	self.phys.body:setAngle(math.random()*math.pi*2)
+	self.x, self.y = self.phys.body:getPosition()
 	if typo then
 		print(typo.name)
 		self.name = typo.name
-		self.thrusters = typo.thrusters
-		self.sensors = typo.sensors
-		self.net, dValues = neuro.new(#self.sensors+3,#self.thrusters,15,8, typo.dValues)
+		--self.thrusters = typo.thrusters
+		--self.sensors = typo.sensors
+		self.net, dValues = neuro.new(7,5,spaceship.layers,spaceship.perLayer, typo.dValues)
 	else
 		self.name = useful.randomString(6)
+		--[[
 		self.thrusters = {}
 		self.sensors =  {}
 		local ts = math.random(2,5)
@@ -37,14 +48,38 @@ function spaceship.new(x,y,typo)
 		for i=1,7-ts do
 			self:addSensor(math.random()*math.pi*2,math.random())
 		end
+		--]]
 
-		self.net, dValues = neuro.new(8,5,15,8)
+		self.net, dValues = neuro.new(7,3,spaceship.layers,spaceship.perLayer)
 	end
+	self.thrusters = {}
+	self.sensors =  {}
+	self:addSensor(0,0)
+	self:addSensor(0,0)
+	self:addSensor(0,0)
+	self:addSensor(0,0)
+	self.sensors[1].a2 = math.pi
+	self.sensors[1].a1 = math.pi+math.pi/6
+	self.sensors[1].r = 500
+	self.sensors[2].a1 = math.pi
+	self.sensors[2].a2 = math.pi-math.pi/6
+	self.sensors[2].r = 500
+	self.sensors[3].a2 = math.pi+math.pi/6
+	self.sensors[3].a1 = math.pi+math.pi/6+math.pi/8
+	self.sensors[3].r = 1000
+	self.sensors[4].a1 = math.pi-math.pi/6
+	self.sensors[4].a2 = math.pi-math.pi/6-math.pi/8
+	self.sensors[4].r = 1000
+	self:addThruster(0,0)
+	self:addThruster(math.pi/2,-math.pi/2)
+	self:addThruster(-math.pi/2,math.pi/2)
 	typo = {}
 	typo.name = self.name
 	typo.thrusters = self.thrusters
 	typo.sensors = self.sensors
 	typo.dValues = dValues
+	self.typo = typo
+	self.nextDust = 0
 
 
 	table.insert(spaceship.all, self)
@@ -53,6 +88,9 @@ end
 
 function spaceship.update(dt)
 	for i, v in useful.upairs(spaceship.all) do
+		if v.purge then
+			print("How?")
+		end
 		v:update(dt)
 	end
 end
@@ -67,13 +105,22 @@ function spaceship.mutate(typo)
 	local t = {}
 	t.dValues = {}
 	for i,v in ipairs(typo.dValues) do
-		t.dValues[i] = v + useful.nrandom(0.01)
+		if math.random()<0.0003 then
+			t.dValues[i] = math.random()*2-1
+		else
+			t.dValues[i] = v + useful.nrandom(0.01)
+		end
 	end
 	t.thrusters = {}
 	for i,v in ipairs(typo.thrusters) do
 		local pa, aa = v.pa, v.aa
-		pa = pa+useful.nrandom(0.05)
-		aa = math.min(math.pi/2, math.max(-math.pi/2,aa+useful.nrandom(0.01)))
+		if math.random()<0.003 then
+			pa = math.random()*math.pi*2
+			aa = math.random()*math.pi-math.pi/2
+		else
+			pa = pa+useful.nrandom(0.05)
+			aa = math.min(math.pi/2, math.max(-math.pi/2,aa+useful.nrandom(0.01)))
+		end
 		local x,y,a = math.cos(pa)*10,math.sin(pa)*10,pa+aa
 		t.thrusters[i] = {
 			pa = pa,
@@ -86,6 +133,9 @@ function spaceship.mutate(typo)
 	t.sensors = {}
 	for i,v in ipairs(typo.sensors) do
 		local a, rr = v.a, v.rr
+		if math.random()<0.003 then
+			a, rr = math.random()*math.pi*2,math.random()
+		end
 		a = a+useful.nrandom(0.05)
 		rr = math.max(0,math.min(1,rr+useful.nrandom(0.01)))
 		local minRadius = 100
@@ -155,9 +205,9 @@ end
 
 function spaceship_mt:addSensor(a,rr)
 	local minRadius = 100
-	local maxRadius = 600
+	local maxRadius = 1200
 	local maxAngle = math.pi
-	local minAngle = math.pi/50
+	local minAngle = 0
 	table.insert(self.sensors,{
 		a = a,
 		rr = rr,
@@ -188,10 +238,10 @@ function spaceship_mt:sense(s)
 	local x, y = self.phys.body:getPosition()
 	local closest
 	local sensedFood = false
-	---[[
+	--[[
 	for i,v in ipairs(spaceship.all) do
-		if self~=v then
-			local vx, vy = v.phys.body:getPosition()
+		if self~=v and not v.purge then
+			local vx, vy = v.x, v.y
 			local d2 = useful.dist2(x,y,vx,vy)
 			local dx = x-vx
 			local dy = y-vy
@@ -200,6 +250,7 @@ function spaceship_mt:sense(s)
 			end
 		end
 	end
+	--]]
 	for i,v in ipairs(food) do
 		local vx, vy = v.x, v.y
 		local d2 = useful.dist2(x,y,vx,vy)
@@ -230,12 +281,25 @@ function isInArc(a1,a2,r,x,y)
 end
 
 function spaceship_mt:update(dt)
-	local x, y = self.phys.body:getPosition()
+	self.health = math.max(0, self.health - (self.burnout+self.cold)*dt)
+	self.cold = math.min(1,self.cold+self.freeze*dt)
+	self.x, self.y = self.phys.body:getPosition()
+	local x, y = self.x, self.y
 	local a = self.phys.body:getAngle()
 	local vx, vy = self.phys.body:getLinearVelocity()
 	local va = self.phys.body:getAngularVelocity()
 	local lx = math.cos(-a)*vx - math.sin(-a)*vy
 	local ly = math.sin(-a)*vx + math.cos(-a)*vy
+
+	for i,v in ipairs(food) do
+		if useful.dist2(self,v)<(30*30) then
+			self.health = 1
+			self.notARetard = true
+			table.remove(food,i)
+			break
+		end
+	end
+
 	for i,v in ipairs(self.sensors) do
 		self.net.ins[i] = self:sense(i)
 	end
@@ -247,10 +311,18 @@ function spaceship_mt:update(dt)
 	for i=1,math.min(#self.thrusters,#self.net.outs) do
 		self.thrusters[i].burn = false
 		if (self.net.outs[i]>0.5) then
+			self.cold = 0
+			self.nextDust = self.nextDust-dt*10
 			self:activateThruster(i)
 		end
 	end
-
+	if self.health<=0 then
+		if not self.purge then
+			self.phys.body:destroy()
+		end
+		self.purge = true
+		table.insert(deathlist,1,self)
+	end
 end
 
 function spaceship_mt:drawFixedUI()
@@ -258,59 +330,69 @@ function spaceship_mt:drawFixedUI()
 end
 
 function spaceship_mt:drawOverlayUI()
-	local x, y = self.phys.body:getPosition()
-	love.graphics.setColor(127,127,127)
-	love.graphics.line(x+20,y-20,x+50,y-50,x+50+font:getWidth(self.name),y-50)
-	--love.graphics.rectangle("line", x-20.5, y-20.5, 40, 40)
-	love.graphics.setColor(255,255,255)
-	local fh = font:getHeight()
-	love.graphics.print(self.name, x+50,y-50-fh)
-	love.graphics.print("Sensors: "..#self.sensors, x+50,y-50+fh*0)
-	love.graphics.print("Thrusters: "..#self.thrusters, x+50,y-50+fh*1)
-	self.net:draw(x+50,y-50+fh*2,4,2)
+	if not self.purge then
+		local x, y = self.phys.body:getPosition()
+		love.graphics.setColor(127,127,127)
+		love.graphics.line(x+20,y-20,x+50,y-50,x+50+font:getWidth(self.name),y-50)
+		--love.graphics.rectangle("line", x-20.5, y-20.5, 40, 40)
+		love.graphics.setColor(255,255,255)
+		local fh = font:getHeight()
+		love.graphics.print(self.name, x+50,y-50-fh)
+		love.graphics.print("Sensors: "..#self.sensors, x+50,y-50+fh*0)
+		love.graphics.print("Thrusters: "..#self.thrusters, x+50,y-50+fh*1)
+		local aftery = self.net:draw(x+50,y-50+fh*2,4,2)
+		love.graphics.setColor(255,0,0)
+		love.graphics.rectangle("fill", x+50, y-50+fh*2+aftery+10, 50*self.health, 5)
+
+		local x, y = self.x,self.y
+		local a = self.phys.body:getAngle()		
+		for i,v in ipairs(self.sensors) do
+			local s = self.net.ins[i]
+			local r = s<0 and useful.lerp(255,0,math.abs(s)) or 255
+			local b = s>0 and useful.lerp(255,0,math.abs(s)) or 255
+			local g = useful.lerp(255,0,math.abs(s))
+			local al = useful.lerp(1,20,math.abs(s))
+			love.graphics.setColor(r,math.max(g,b),b,al)
+			love.graphics.arc("fill", x, y, v.r, v.a1+a, v.a2+a)
+		end
+	end
 end
 
 function spaceship_mt:draw()
-	local x, y = self.phys.body:getPosition()
-	local a = self.phys.body:getAngle()
-	self:drawUnfettered(x,y,a)
+	if not self.purge then
+		local x, y = self.x,self.y
+		local a = self.phys.body:getAngle()
+		self:drawUnfettered(x,y,a)
+	end
 end
 
 function spaceship_mt:drawUnfettered(x,y,a)
-	local vx, vy = self.phys.body:getLinearVelocity()
-	local r,g,b = neuro.color(self.net.outs[1])
-	local ang = self.phys.body:getAngle()
-	local lx = math.cos(-ang)*vx - math.sin(-ang)*vy
-	local ly = math.sin(-ang)*vx + math.cos(-ang)*vy
-	local dlx = math.cos(a)*lx - math.sin(a)*ly
-	local dly = math.sin(a)*lx + math.cos(a)*ly
-	love.graphics.setColor(0,255,255)
-	love.graphics.line(x,y,x+dlx,y+dly)
-	love.graphics.setColor(255,255,255)
-	love.graphics.circle("line", x, y, 10)
-	--love.graphics.line(x+math.cos(a)*10,y+math.sin(a)*10,x+math.cos(a)*15,y+math.sin(a)*15)
-	for i,v in ipairs(self.thrusters) do
-		if v.burn then
-			love.graphics.setColor(255,255,255)
-		else
-			love.graphics.setColor(127,127,127)
+	if not self.purge then
+		local vx, vy = self.phys.body:getLinearVelocity()
+		local r,g,b = neuro.color(self.net.outs[1])
+		local ang = self.phys.body:getAngle()
+		local lx = math.cos(-ang)*vx - math.sin(-ang)*vy
+		local ly = math.sin(-ang)*vx + math.cos(-ang)*vy
+		local dlx = math.cos(a)*lx - math.sin(a)*ly
+		local dly = math.sin(a)*lx + math.cos(a)*ly
+		love.graphics.setColor(0,255,255)
+		--love.graphics.line(x,y,x+dlx,y+dly)
+		love.graphics.setColor(255,255,255)
+		love.graphics.circle("line", x, y, 10)
+		--love.graphics.line(x+math.cos(a)*10,y+math.sin(a)*10,x+math.cos(a)*15,y+math.sin(a)*15)
+		for i,v in ipairs(self.thrusters) do
+			if v.burn then
+				love.graphics.setColor(255,255,255)
+			else
+				love.graphics.setColor(127,127,127)
+			end
+			local tx = x + math.cos(a)*v.x - math.sin(a)*v.y
+			local ty = y + math.sin(a)*v.x + math.cos(a)*v.y
+			love.graphics.line(tx,ty,tx+math.cos(a+v.a)*15,ty+math.sin(a+v.a)*15)
 		end
-		local tx = x + math.cos(a)*v.x - math.sin(a)*v.y
-		local ty = y + math.sin(a)*v.x + math.cos(a)*v.y
-		love.graphics.line(tx,ty,tx+math.cos(a+v.a)*15,ty+math.sin(a+v.a)*15)
-	end
 
-	for i,v in ipairs(self.sensors) do
-		local s = self.net.ins[i]
-		local r = s>0 and useful.lerp(255,0,math.abs(s)) or 255
-		local b = s<0 and useful.lerp(255,0,math.abs(s)) or 255
-		local g = useful.lerp(255,0,math.abs(s))
-		local al = useful.lerp(2,4,math.abs(s))
-		love.graphics.setColor(r,g,b,al)
-		love.graphics.arc("fill", x, y, v.r, v.a1+a, v.a2+a)
+		--love.graphics.line(x,y,x+self.net.outs[1]*40,y+self.net.outs[2]*40)
+		--love.graphics.line(x,y,x+vx,y+vy)
 	end
-
-	--love.graphics.line(x,y,x+self.net.outs[1]*40,y+self.net.outs[2]*40)
-	--love.graphics.line(x,y,x+vx,y+vy)
 end
 

@@ -89,6 +89,7 @@ function neuro_mt:draw(x,y,size,space)
 		end
 		love.graphics.rectangle("fill", self.nLayers*(size+space)+x+size+space, y+i*(size+space), size, size)
 	end
+	return math.max(self.perLayer,#self.ins,#self.outs)*(size+space)
 end
 
 function neuro_mt:getVal(l,n)

@@ -4,6 +4,182 @@
 		"selected_items":
 		[
 			[
+				"ty",
+				"typo2"
+			],
+			[
+				"dv",
+				"dValues"
+			],
+			[
+				"for",
+				"for	for i=1,10"
+			],
+			[
+				"tr",
+				"thrusters"
+			],
+			[
+				"fo",
+				"fori	for i,v in ipairs()"
+			],
+			[
+				"n",
+				"name"
+			],
+			[
+				"t",
+				"typo"
+			],
+			[
+				"u",
+				"useful"
+			],
+			[
+				"the",
+				"thrusters"
+			],
+			[
+				"th",
+				"thrusters"
+			],
+			[
+				"ne",
+				"name"
+			],
+			[
+				"sen",
+				"sensors"
+			],
+			[
+				"sp",
+				"spaceship"
+			],
+			[
+				"get",
+				"getAngle"
+			],
+			[
+				"dra",
+				"drawUnfettered"
+			],
+			[
+				"cam",
+				"camx"
+			],
+			[
+				"le",
+				"length"
+			],
+			[
+				"po",
+				"love.graphics.point(x, y)"
+			],
+			[
+				"ga",
+				"love.graphics"
+			],
+			[
+				"sta",
+				"starfield"
+			],
+			[
+				"se",
+				"sensors"
+			],
+			[
+				"is",
+				"isInArc"
+			],
+			[
+				"ses",
+				"sensor"
+			],
+			[
+				"b",
+				"body"
+			],
+			[
+				"spe",
+				"spaceship_mt"
+			],
+			[
+				"r",
+				"random"
+			],
+			[
+				"min",
+				"minRadius"
+			],
+			[
+				"max",
+				"maxAngle"
+			],
+			[
+				"ma",
+				"maxRadius"
+			],
+			[
+				"thr",
+				"thrusters"
+			],
+			[
+				"in",
+				"insert"
+			],
+			[
+				"lo",
+				"love"
+			],
+			[
+				"up",
+				"update"
+			],
+			[
+				"ph",
+				"phys"
+			],
+			[
+				"new",
+				"love.physics.newCircleShape(radius)"
+			],
+			[
+				"spa",
+				"spaceship_mt"
+			],
+			[
+				"getH",
+				"love.graphics.getHeight()"
+			],
+			[
+				"setCan",
+				"love.graphics.setCanvas()"
+			],
+			[
+				"setC",
+				"love.graphics.setColor(rgba)"
+			],
+			[
+				"re",
+				"love.graphics.rectangle(mode, x, y, width, height)"
+			],
+			[
+				"ins",
+				"ins"
+			],
+			[
+				"ge",
+				"love.graphics.getHeight()"
+			],
+			[
+				"neu",
+				"neuro"
+			],
+			[
+				"l",
+				"layers"
+			],
+			[
 				"c",
 				"creature"
 			],
@@ -12,16 +188,8 @@
 				"creature_mt"
 			],
 			[
-				"u",
-				"update"
-			],
-			[
 				"m",
 				"myGameObjects"
-			],
-			[
-				"for",
-				"fori	for i,v in ipairs()"
 			],
 			[
 				"lin",
@@ -40,16 +208,8 @@
 				"lineStyle"
 			],
 			[
-				"get",
-				"getWidth"
-			],
-			[
 				"do",
 				"doWindow"
-			],
-			[
-				"re",
-				"rectangle"
 			],
 			[
 				"fu",
@@ -58,10 +218,6 @@
 			[
 				"UI",
 				"UI_mt"
-			],
-			[
-				"lo",
-				"local	local x = 1"
 			]
 		]
 	},
@@ -96,20 +252,23 @@
 	},
 	"file_history":
 	[
+		"/Users/Gaeel/dev/jams/neurosaver/src/diplodocus/useful.lua",
+		"/Users/Gaeel/dev/jams/neurosaver/src/spaceship.lua",
+		"/Users/Gaeel/dev/jams/neurosaver/src/game.lua",
 		"/Users/Gaeel/dev/jams/neurosaver/src/conf.lua",
+		"/Users/Gaeel/dev/jams/neurosaver/src/main.lua",
+		"/Users/Gaeel/dev/jams/neurosaver/src/neuro.lua",
+		"/Users/Gaeel/dev/jams/neurosaver/src/neuro",
 		"/Users/Gaeel/dev/jams/neurosaver/src/UI.lua",
 		"/Users/Gaeel/dev/jams/neurosaver/src/creature.lua",
-		"/Users/Gaeel/dev/jams/neurosaver/src/main.lua",
-		"/Users/Gaeel/dev/jams/neurosaver/src/game.lua",
 		"/Users/Gaeel/Library/Application Support/Sublime Text 2/Packages/SublimeLove/Love.sublime-build",
 		"/Users/Gaeel/Library/Application Support/Sublime Text 2/Packages/SublimeLove/LoveComplete.py",
 		"/Users/Gaeel/Library/Application Support/Sublime Text 2/Packages/User/love.sublime-build",
-		"/Users/Gaeel/dev/jams/neurosaver/src/gamestate.lua",
-		"/Users/Gaeel/dev/jams/neurosaver/src/diplodocus/useful.lua"
+		"/Users/Gaeel/dev/jams/neurosaver/src/gamestate.lua"
 	],
 	"find":
 	{
-		"height": 0.0
+		"height": 35.0
 	},
 	"find_in_files":
 	{
@@ -123,6 +282,11 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"print",
+			")+,",
+			"self",
+			"lerp",
+			"_i",
 			"toGrid"
 		],
 		"highlight": true,
@@ -153,7 +317,7 @@
 	},
 	"input":
 	{
-		"height": 0.0
+		"height": 33.0
 	},
 	"layout":
 	{
